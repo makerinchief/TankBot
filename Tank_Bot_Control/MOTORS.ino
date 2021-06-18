@@ -1,43 +1,27 @@
-/*  
-
-  SoftPWM Library by Brett Hagman
-  https://github.com/bhagman/SoftPWM
-
-    The motor driver uses two GPIO pins to control each motor.  These can
-  be driven using PWM.  Using the SoftPWM library, non hardware PWM pins can
-  be used as a software PWM pin.
-
-*/
-
-#include <SoftPWM.h>
 
 //Left Side
-int motor1_Apin = 5; //Hardware PWM
-int motor1_Bpin = 6; //Hardware PWM
-int motor2_Apin = 7;
-int motor2_Bpin = 8;
+const int LEFT_PWM = 5;
+const int LEFT_A = 4;
+const int LEFT_B = 3;
 
 //Right Side
-int motor3_Apin = 14;  //A0
-int motor3_Bpin = 15;  //A1
-int motor4_Apin = 16;  //A2
-int motor4_Bpin = 17;  //A3
+const int RIGHT_PWM = 6;
+const int RIGHT_A = 7;
+const int RIGHT_B = 8;
 
 void SetupMotors() {
 
-  SoftPWMBegin();
+  pinMode(LEFT_PWM, OUTPUT);
+  pinMode(LEFT_A, OUTPUT);
+  pinMode(LEFT_B, OUTPUT);
 
-  SoftPWMSet(motor1_Apin, 0);
-  SoftPWMSet(motor1_Bpin, 0);
-  SoftPWMSet(motor2_Apin, 0);
-  SoftPWMSet(motor2_Bpin, 0);
-  SoftPWMSet(motor3_Apin, 0);
-  SoftPWMSet(motor3_Bpin, 0);
-  SoftPWMSet(motor4_Apin, 0);
-  SoftPWMSet(motor4_Bpin, 0);
+  pinMode(RIGHT_PWM, OUTPUT);
+  pinMode(RIGHT_A, OUTPUT);
+  pinMode(RIGHT_B, OUTPUT);
 
 }
 
+//Use this to test the motor directions
 void TestTank(int motorSpeed) {
 
   Serial.println("FORWARD");
@@ -57,6 +41,14 @@ void TestTank(int motorSpeed) {
   delay(2000);
 
   Serial.println("RIGHT");
+  LeftBackward(motorSpeed);
+  RightForward(motorSpeed);
+  delay(2000);
+  LeftStop();
+  RightStop();
+  delay(2000);
+
+  Serial.println("LEFT");
   LeftForward(motorSpeed);
   RightBackward(motorSpeed);
   delay(2000);
@@ -64,73 +56,61 @@ void TestTank(int motorSpeed) {
   RightStop();
   delay(2000);
 
-  Serial.println("LEFT");
-  LeftBackward(motorSpeed);
-  RightForward(motorSpeed);
-  delay(2000);
-  LeftStop();
-  RightStop();
-  delay(2000);
-  
 }
 
 
-//Never have a motor's A and B pins on at the same time!
+
+//  If you are having issues with your Tank Bot's motor direction matching the
+//  Controller Bot's joysticks, double check your wiring or try switching the HIGH and LOW values
+//  in the digitalWrite() statements below.  
+
+//                         !!WARNING!!
+//   Never set a motor's A and B pins to HIGH at the same time!
+//              !!WILL CAUSE MOTOR DRIVER FAILURE!!
+
 void LeftForward(int motorSpeed) {
 
-  //Left Side
-  SoftPWMSet(motor1_Apin, motorSpeed);
-  SoftPWMSet(motor1_Bpin, 0);
-  SoftPWMSet(motor2_Apin, motorSpeed);
-  SoftPWMSet(motor2_Bpin, 0);
+  analogWrite(LEFT_PWM, motorSpeed);
+  digitalWrite(LEFT_A, LOW);
+  digitalWrite(LEFT_B, HIGH);
 
 }
 
 void LeftBackward(int motorSpeed) {
 
-  //Left Side
-  SoftPWMSet(motor1_Apin, 0);
-  SoftPWMSet(motor1_Bpin, motorSpeed);
-  SoftPWMSet(motor2_Apin, 0);
-  SoftPWMSet(motor2_Bpin, motorSpeed);
+  analogWrite(LEFT_PWM, motorSpeed);
+  digitalWrite(LEFT_A, HIGH);
+  digitalWrite(LEFT_B, LOW);
 
 }
 
 void LeftStop() {
 
-  //Left Side
-  SoftPWMSet(motor1_Apin, 0);
-  SoftPWMSet(motor1_Bpin, 0);
-  SoftPWMSet(motor2_Apin, 0);
-  SoftPWMSet(motor2_Bpin, 0);
+  analogWrite(LEFT_PWM, 0);
+  digitalWrite(LEFT_A, LOW);
+  digitalWrite(LEFT_B, LOW);
 
 }
 
 void RightForward(int motorSpeed) {
 
-  //Right Side
-  SoftPWMSet(motor3_Apin, motorSpeed);
-  SoftPWMSet(motor3_Bpin, 0);
-  SoftPWMSet(motor4_Apin, motorSpeed);
-  SoftPWMSet(motor4_Bpin, 0);
+
+  analogWrite(RIGHT_PWM, motorSpeed);
+  digitalWrite(RIGHT_A, LOW);
+  digitalWrite(RIGHT_B, HIGH);
 
 }
 
 void RightBackward(int motorSpeed) {
 
-  //Right Side
-  SoftPWMSet(motor3_Apin, 0);
-  SoftPWMSet(motor3_Bpin, motorSpeed);
-  SoftPWMSet(motor4_Apin, 0);
-  SoftPWMSet(motor4_Bpin, motorSpeed);
+  analogWrite(RIGHT_PWM, motorSpeed);
+  digitalWrite(RIGHT_A, HIGH);
+  digitalWrite(RIGHT_B, LOW);
 
 }
 void RightStop() {
 
-  //Right Side
-  SoftPWMSet(motor3_Apin, 0);
-  SoftPWMSet(motor3_Bpin, 0);
-  SoftPWMSet(motor4_Apin, 0);
-  SoftPWMSet(motor4_Bpin, 0);
-
+  analogWrite(RIGHT_PWM, 0);
+  digitalWrite(RIGHT_A, LOW);
+  digitalWrite(RIGHT_B, LOW);
 }
